@@ -1,6 +1,7 @@
 use crate::input::Line;
 use color_eyre::eyre::{eyre, Result};
 use model2vec_rs::model::StaticModel;
+use tracing::{debug, info, instrument};
 
 /// A dense vector representation of a single line of text.
 #[derive(Debug, Clone, PartialEq)]
@@ -13,12 +14,16 @@ pub struct Embedding(pub Vec<f32>);
 ///
 /// NOTE: The exact `StaticModel` API (constructor name, arguments) is a
 /// placeholder pending verification against the real crate docs.
+#[instrument(skip(lines))]
 pub fn embed_lines(lines: &[Line]) -> Result<Vec<Embedding>> {
+    info!("loading model2vec model");
     let model = StaticModel::from_pretrained("minishlab/potion-base-8M", None, None, None)
         .map_err(|error| eyre!("failed to load default model2vec model: {error}"))?;
 
     let texts: Vec<String> = lines.iter().map(|line| line.text.clone()).collect();
+    debug!(line_count = texts.len(), "encoding lines");
     let vectors = model.encode(&texts);
+    info!(embedding_count = vectors.len(), "computed embeddings");
 
     Ok(vectors.into_iter().map(Embedding).collect())
 }

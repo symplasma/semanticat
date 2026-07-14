@@ -1,12 +1,20 @@
 use crate::grouping::Grouped;
 use std::io::{self, Write};
+use tracing::{debug, instrument};
 
 /// Writes `grouped` to `writer`.
 ///
 /// Each cluster's lines are printed in original order, followed by a blank
 /// line separator. Noise lines (if any) are printed last, also separated
 /// from the preceding cluster by a blank line.
+#[instrument(skip(grouped, writer))]
 pub fn print(grouped: &Grouped, writer: &mut impl Write) -> io::Result<()> {
+    debug!(
+        cluster_count = grouped.clusters.len(),
+        noise_count = grouped.noise.len(),
+        "writing output"
+    );
+
     for cluster in &grouped.clusters {
         for line in cluster {
             writeln!(writer, "{}", line.text)?;

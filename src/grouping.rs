@@ -1,6 +1,7 @@
 use crate::clustering::{Assignment, ClusterId};
 use crate::input::Line;
 use std::collections::HashMap;
+use tracing::{debug, instrument};
 
 /// Lines grouped by cluster (in first-appearance order), plus any noise
 /// lines kept separately at the end.
@@ -15,6 +16,7 @@ pub struct Grouped {
 /// Clusters are ordered by first appearance (the order in which their first
 /// member line occurs in the original input). Lines within a cluster, and
 /// noise lines, retain their original relative order.
+#[instrument(skip(lines, assignments))]
 pub fn group(lines: Vec<Line>, assignments: Vec<Assignment>) -> Grouped {
     let mut cluster_order: Vec<ClusterId> = Vec::new();
     let mut cluster_lines: HashMap<ClusterId, Vec<Line>> = HashMap::new();
@@ -35,10 +37,16 @@ pub fn group(lines: Vec<Line>, assignments: Vec<Assignment>) -> Grouped {
         }
     }
 
-    let clusters = cluster_order
+    let clusters: Vec<Vec<Line>> = cluster_order
         .into_iter()
         .map(|id| cluster_lines.remove(&id).unwrap_or_default())
         .collect();
+
+    debug!(
+        cluster_count = clusters.len(),
+        noise_count = noise.len(),
+        "grouped lines"
+    );
 
     Grouped { clusters, noise }
 }

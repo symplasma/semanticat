@@ -2,6 +2,7 @@ use crate::embedding::Embedding;
 use avx_clustering::HDBSCAN;
 use color_eyre::eyre::{eyre, Result};
 use ndarray::Array2;
+use tracing::{debug, info, instrument};
 
 /// Identifies a cluster of semantically similar lines.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -22,6 +23,7 @@ pub enum Assignment {
 /// NOTE: This assumes `HDBSCANResult` exposes a `labels: Vec<i32>` field
 /// (with negative values indicating noise), which is a best-effort guess
 /// pending verification against the real crate docs.
+#[instrument(skip(embeddings))]
 pub fn cluster(
     embeddings: &[Embedding],
     min_cluster_size: usize,
@@ -29,6 +31,7 @@ pub fn cluster(
 ) -> Result<Vec<Assignment>> {
     let rows = embeddings.len();
     let cols = embeddings.first().map_or(0, |embedding| embedding.0.len());
+    debug!(rows, cols, "building embedding matrix");
 
     let flat: Vec<f64> = embeddings
         .iter()
@@ -38,11 +41,12 @@ pub fn cluster(
     let matrix = Array2::from_shape_vec((rows, cols), flat)
         .map_err(|error| eyre!("failed to build embedding matrix: {error}"))?;
 
+    info!(min_cluster_size, min_samples, "running HDBSCAN");
     let result = HDBSCAN::new(min_cluster_size, min_samples)
         .fit(&matrix.view())
         .map_err(|error| eyre!("HDBSCAN clustering failed: {error}"))?;
 
-    Ok(result
+    let assignments: Vec<Assignment> = result
         .labels
         .into_iter()
         .map(|label| {
@@ -52,5 +56,17 @@ pub fn cluster(
                 Assignment::Cluster(ClusterId(label as usize))
             }
         })
-        .collect())
+        .collect();
+
+    let noise_count = assignments
+        .iter()
+        .filter(|assignment| matches!(assignment, Assignment::Noise))
+        .count();
+    info!(
+        total = assignments.len(),
+        noise = noise_count,
+        "clustering complete"
+    );
+
+    Ok(assignments)
 }
