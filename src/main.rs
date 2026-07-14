@@ -1,6 +1,7 @@
 use arboard::Clipboard;
 use clap::Parser;
 use color_eyre::eyre::Result;
+use fastembed::EmbeddingModel;
 use std::io::{self, IsTerminal, Read};
 use tracing::{info, Level};
 
@@ -9,6 +10,27 @@ mod embedding;
 mod grouping;
 mod input;
 mod output;
+
+/// Friendly names for the supported `fastembed` embedding models.
+#[derive(Clone, Debug, clap::ValueEnum)]
+enum ModelChoice {
+    /// BAAI/bge-base-en-v1.5 (768 dimensions).
+    BgeBase,
+    /// BAAI/bge-large-en-v1.5 (1024 dimensions).
+    BgeLarge,
+    /// sentence-transformers/all-MiniLM-L6-v2 (384 dimensions).
+    MiniLmL6,
+}
+
+impl From<ModelChoice> for EmbeddingModel {
+    fn from(choice: ModelChoice) -> Self {
+        match choice {
+            ModelChoice::BgeBase => EmbeddingModel::BGEBaseENV15,
+            ModelChoice::BgeLarge => EmbeddingModel::BGELargeENV15,
+            ModelChoice::MiniLmL6 => EmbeddingModel::AllMiniLML6V2,
+        }
+    }
+}
 
 /// Sort the lines of a file into semantic clusters.
 #[derive(Parser, Debug)]
@@ -21,6 +43,10 @@ struct Cli {
     /// Minimum number of samples in a neighborhood for HDBSCAN core points.
     #[arg(long, default_value_t = 2)]
     min_samples: usize,
+
+    /// Embedding model to use for semantic similarity.
+    #[arg(long, value_enum, default_value = "bge-base")]
+    model: ModelChoice,
 
     /// Increase logging verbosity (-v for debug, -vv for trace).
     #[arg(short, long, action = clap::ArgAction::Count)]
@@ -85,7 +111,7 @@ fn main() -> Result<()> {
     info!(bytes = raw_input.len(), "read input");
 
     let lines = input::read_non_blank_lines(&raw_input);
-    let embeddings = embedding::embed_lines(&lines)?;
+    let embeddings = embedding::embed_lines(&lines, cli.model.into())?;
     let assignments = clustering::cluster(&embeddings, cli.min_cluster_size, cli.min_samples)?;
     let grouped = grouping::group(lines, assignments);
 

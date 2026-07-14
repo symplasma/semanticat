@@ -9,12 +9,12 @@ pub struct Embedding(pub Vec<f32>);
 
 /// Computes an [`Embedding`] for each of the given `lines`, in order.
 ///
-/// Uses `fastembed`'s default text embedding model, downloading it on first
-/// use if it is not already cached locally.
+/// Uses the given `fastembed` text embedding `model`, downloading it on
+/// first use if it is not already cached locally.
 #[instrument(skip(lines))]
-pub fn embed_lines(lines: &[Line]) -> Result<Vec<Embedding>> {
-    info!("loading fastembed model");
-    let mut model = TextEmbedding::try_new(InitOptions::new(EmbeddingModel::BGEBaseENV15))
+pub fn embed_lines(lines: &[Line], model: EmbeddingModel) -> Result<Vec<Embedding>> {
+    info!(?model, "loading fastembed model");
+    let mut model = TextEmbedding::try_new(InitOptions::new(model))
         .map_err(|error| eyre!("failed to load fastembed model: {error}"))?;
 
     let texts: Vec<&str> = lines.iter().map(|line| line.text.as_str()).collect();
