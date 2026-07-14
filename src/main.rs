@@ -3,7 +3,7 @@ use clap::{Parser, ValueEnum};
 use color_eyre::eyre::Result;
 use fastembed::EmbeddingModel;
 use std::io::{self, IsTerminal, Read};
-use tracing::{info, Level};
+use tracing::{Level, info};
 
 mod clustering;
 mod embedding;
@@ -189,8 +189,9 @@ struct Cli {
 /// Maps a `-v` occurrence count to a tracing verbosity level.
 fn verbosity_level(count: u8) -> Level {
     match count {
-        0 => Level::INFO,
-        1 => Level::DEBUG,
+        0 => Level::WARN,
+        1 => Level::INFO,
+        2 => Level::DEBUG,
         _ => Level::TRACE,
     }
 }
