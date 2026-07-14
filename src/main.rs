@@ -272,7 +272,7 @@ fn main() -> Result<()> {
     let lines = input::read_non_blank_lines(&raw_input);
 
     let progress_enabled = !cli.no_progress && cli.verbose == 0 && io::stderr().is_terminal();
-    let total_steps = (lines.len() as u64) * 2;
+    let total_steps = lines.len() as u64;
     let progress = progress::Progress::new(total_steps, progress_enabled);
 
     let embeddings = embedding::embed_lines(&lines, cli.model.into(), &progress)?;
