@@ -49,3 +49,19 @@ banana
 
 orange
 ```
+
+## Features
+
+- [x] Auto-download embedding models on first use
+- [x] Progress bar for:
+  - [x] Downloading new models
+  - [x] Loading models
+  - [x] Embedding text
+  - [x] Clustering text (this is fast)
+- [x] Allow user selectable embedding models
+- [x] Read from STDIN
+- [x] Read from clipboard if STDIN is a terminal (tty)
+- [ ] Read from files specified as arguments
+- [x] Group text by semantic similarity
+- [ ] Allow user selectable clustering algorithms
+- [ ] Add meaningful headers between clusters (probably requires integration with an LLM)
