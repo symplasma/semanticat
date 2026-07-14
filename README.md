@@ -67,7 +67,7 @@ orange
 - [x] Allow user selectable embedding models
 - [x] Read from STDIN
 - [x] Read from clipboard if STDIN is a terminal (tty)
-- [ ] Read from files specified as arguments
+- [x] Read from files specified as arguments
 - [ ] Clean or normalize text before generating embeddings
   - [x] Use only the title of markdown links
   - [ ] Add flag to disable markdown link handling

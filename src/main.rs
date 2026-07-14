@@ -2,7 +2,9 @@ use arboard::Clipboard;
 use clap::{Parser, ValueEnum};
 use color_eyre::eyre::Result;
 use fastembed::EmbeddingModel;
+use std::fs;
 use std::io::{self, IsTerminal, Read};
+use std::path::PathBuf;
 use tracing::{Level, info};
 
 mod clustering;
@@ -189,6 +191,12 @@ struct Cli {
     /// Disable the progress bar.
     #[arg(long)]
     no_progress: bool,
+
+    /// One or more files to read input from. If provided, these take
+    /// precedence over stdin and the clipboard; their contents are
+    /// concatenated together.
+    #[arg(value_name = "FILE")]
+    files: Vec<PathBuf>,
 }
 
 /// Maps a `-v` occurrence count to a tracing verbosity level.
@@ -239,9 +247,24 @@ fn read_stdin() -> Result<String> {
     Ok(raw_input)
 }
 
-/// Reads input from stdin if it is piped and non-empty, otherwise falls
-/// back to the system clipboard.
-fn read_input() -> Result<String> {
+/// Reads and concatenates the contents of the given files, in order.
+fn read_files(paths: &[PathBuf]) -> Result<String> {
+    let mut contents = String::new();
+    for path in paths {
+        contents.push_str(&fs::read_to_string(path)?);
+    }
+    Ok(contents)
+}
+
+/// Reads input from the given files if any are provided, otherwise from
+/// stdin if it is piped and non-empty, otherwise falls back to the system
+/// clipboard.
+fn read_input(files: &[PathBuf]) -> Result<String> {
+    if !files.is_empty() {
+        info!(count = files.len(), "reading input from files");
+        return read_files(files);
+    }
+
     if io::stdin().is_terminal() {
         info!("stdin is a terminal, reading from clipboard instead");
         return read_clipboard();
@@ -266,7 +289,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let raw_input = read_input()?;
+    let raw_input = read_input(&cli.files)?;
     info!(bytes = raw_input.len(), "read input");
 
     let lines = input::read_non_blank_lines(&raw_input);
