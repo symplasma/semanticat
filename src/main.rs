@@ -11,23 +11,152 @@ mod grouping;
 mod input;
 mod output;
 
-/// Friendly names for the supported `fastembed` embedding models.
+/// Friendly names for the supported `fastembed` text embedding models.
 #[derive(Clone, Debug, clap::ValueEnum)]
 enum ModelChoice {
+    /// sentence-transformers/all-MiniLM-L6-v2 (384 dimensions).
+    AllMiniLmL6V2,
+    /// Quantized sentence-transformers/all-MiniLM-L6-v2.
+    AllMiniLmL6V2Q,
+    /// sentence-transformers/all-MiniLM-L12-v2.
+    AllMiniLmL12V2,
+    /// Quantized sentence-transformers/all-MiniLM-L12-v2.
+    AllMiniLmL12V2Q,
+    /// sentence-transformers/all-mpnet-base-v2.
+    AllMpnetBaseV2,
     /// BAAI/bge-base-en-v1.5 (768 dimensions).
     BgeBase,
+    /// Quantized BAAI/bge-base-en-v1.5.
+    BgeBaseQ,
     /// BAAI/bge-large-en-v1.5 (1024 dimensions).
     BgeLarge,
-    /// sentence-transformers/all-MiniLM-L6-v2 (384 dimensions).
-    MiniLmL6,
+    /// Quantized BAAI/bge-large-en-v1.5.
+    BgeLargeQ,
+    /// BAAI/bge-small-en-v1.5 (default).
+    BgeSmall,
+    /// Quantized BAAI/bge-small-en-v1.5.
+    BgeSmallQ,
+    /// nomic-ai/nomic-embed-text-v1.
+    NomicEmbedTextV1,
+    /// nomic-ai/nomic-embed-text-v1.5.
+    NomicEmbedTextV15,
+    /// Quantized nomic-ai/nomic-embed-text-v1.5.
+    NomicEmbedTextV15Q,
+    /// sentence-transformers/paraphrase-MiniLM-L6-v2.
+    ParaphraseMlMiniLmL12V2,
+    /// Quantized sentence-transformers/paraphrase-MiniLM-L6-v2.
+    ParaphraseMlMiniLmL12V2Q,
+    /// sentence-transformers/paraphrase-mpnet-base-v2.
+    ParaphraseMlMpnetBaseV2,
+    /// BAAI/bge-small-zh-v1.5.
+    BgeSmallZh,
+    /// BAAI/bge-large-zh-v1.5.
+    BgeLargeZh,
+    /// BAAI/bge-m3.
+    BgeM3,
+    /// lightonai/modernbert-embed-large.
+    ModernBertEmbedLarge,
+    /// intfloat/multilingual-e5-small.
+    MultilingualE5Small,
+    /// intfloat/multilingual-e5-base.
+    MultilingualE5Base,
+    /// intfloat/multilingual-e5-large.
+    MultilingualE5Large,
+    /// mixedbread-ai/mxbai-embed-large-v1.
+    MxbaiEmbedLargeV1,
+    /// Quantized mixedbread-ai/mxbai-embed-large-v1.
+    MxbaiEmbedLargeV1Q,
+    /// Alibaba-NLP/gte-base-en-v1.5.
+    GteBase,
+    /// Quantized Alibaba-NLP/gte-base-en-v1.5.
+    GteBaseQ,
+    /// Alibaba-NLP/gte-large-en-v1.5.
+    GteLarge,
+    /// Quantized Alibaba-NLP/gte-large-en-v1.5.
+    GteLargeQ,
+    /// Qdrant/clip-ViT-B-32-text.
+    ClipVitB32,
+    /// jinaai/jina-embeddings-v2-base-code.
+    JinaEmbeddingsV2BaseCode,
+    /// jinaai/jina-embeddings-v2-base-en.
+    JinaEmbeddingsV2BaseEn,
+    /// onnx-community/embeddinggemma-300m-ONNX.
+    EmbeddingGemma300M,
+    /// Quantized (4-bit) onnx-community/embeddinggemma-300m-ONNX.
+    EmbeddingGemma300MQ4,
+    /// Quantized onnx-community/embeddinggemma-300m-ONNX.
+    EmbeddingGemma300MQ,
+    /// snowflake/snowflake-arctic-embed-xs.
+    SnowflakeArcticEmbedXs,
+    /// Quantized snowflake/snowflake-arctic-embed-xs.
+    SnowflakeArcticEmbedXsQ,
+    /// snowflake/snowflake-arctic-embed-s.
+    SnowflakeArcticEmbedS,
+    /// Quantized snowflake/snowflake-arctic-embed-s.
+    SnowflakeArcticEmbedSQ,
+    /// snowflake/snowflake-arctic-embed-m.
+    SnowflakeArcticEmbedM,
+    /// Quantized snowflake/snowflake-arctic-embed-m.
+    SnowflakeArcticEmbedMQ,
+    /// snowflake/snowflake-arctic-embed-m-long.
+    SnowflakeArcticEmbedMLong,
+    /// Quantized snowflake/snowflake-arctic-embed-m-long.
+    SnowflakeArcticEmbedMLongQ,
+    /// snowflake/snowflake-arctic-embed-l.
+    SnowflakeArcticEmbedL,
+    /// Quantized snowflake/snowflake-arctic-embed-l.
+    SnowflakeArcticEmbedLQ,
 }
 
 impl From<ModelChoice> for EmbeddingModel {
     fn from(choice: ModelChoice) -> Self {
         match choice {
+            ModelChoice::AllMiniLmL6V2 => EmbeddingModel::AllMiniLML6V2,
+            ModelChoice::AllMiniLmL6V2Q => EmbeddingModel::AllMiniLML6V2Q,
+            ModelChoice::AllMiniLmL12V2 => EmbeddingModel::AllMiniLML12V2,
+            ModelChoice::AllMiniLmL12V2Q => EmbeddingModel::AllMiniLML12V2Q,
+            ModelChoice::AllMpnetBaseV2 => EmbeddingModel::AllMpnetBaseV2,
             ModelChoice::BgeBase => EmbeddingModel::BGEBaseENV15,
+            ModelChoice::BgeBaseQ => EmbeddingModel::BGEBaseENV15Q,
             ModelChoice::BgeLarge => EmbeddingModel::BGELargeENV15,
-            ModelChoice::MiniLmL6 => EmbeddingModel::AllMiniLML6V2,
+            ModelChoice::BgeLargeQ => EmbeddingModel::BGELargeENV15Q,
+            ModelChoice::BgeSmall => EmbeddingModel::BGESmallENV15,
+            ModelChoice::BgeSmallQ => EmbeddingModel::BGESmallENV15Q,
+            ModelChoice::NomicEmbedTextV1 => EmbeddingModel::NomicEmbedTextV1,
+            ModelChoice::NomicEmbedTextV15 => EmbeddingModel::NomicEmbedTextV15,
+            ModelChoice::NomicEmbedTextV15Q => EmbeddingModel::NomicEmbedTextV15Q,
+            ModelChoice::ParaphraseMlMiniLmL12V2 => EmbeddingModel::ParaphraseMLMiniLML12V2,
+            ModelChoice::ParaphraseMlMiniLmL12V2Q => EmbeddingModel::ParaphraseMLMiniLML12V2Q,
+            ModelChoice::ParaphraseMlMpnetBaseV2 => EmbeddingModel::ParaphraseMLMpnetBaseV2,
+            ModelChoice::BgeSmallZh => EmbeddingModel::BGESmallZHV15,
+            ModelChoice::BgeLargeZh => EmbeddingModel::BGELargeZHV15,
+            ModelChoice::BgeM3 => EmbeddingModel::BGEM3,
+            ModelChoice::ModernBertEmbedLarge => EmbeddingModel::ModernBertEmbedLarge,
+            ModelChoice::MultilingualE5Small => EmbeddingModel::MultilingualE5Small,
+            ModelChoice::MultilingualE5Base => EmbeddingModel::MultilingualE5Base,
+            ModelChoice::MultilingualE5Large => EmbeddingModel::MultilingualE5Large,
+            ModelChoice::MxbaiEmbedLargeV1 => EmbeddingModel::MxbaiEmbedLargeV1,
+            ModelChoice::MxbaiEmbedLargeV1Q => EmbeddingModel::MxbaiEmbedLargeV1Q,
+            ModelChoice::GteBase => EmbeddingModel::GTEBaseENV15,
+            ModelChoice::GteBaseQ => EmbeddingModel::GTEBaseENV15Q,
+            ModelChoice::GteLarge => EmbeddingModel::GTELargeENV15,
+            ModelChoice::GteLargeQ => EmbeddingModel::GTELargeENV15Q,
+            ModelChoice::ClipVitB32 => EmbeddingModel::ClipVitB32,
+            ModelChoice::JinaEmbeddingsV2BaseCode => EmbeddingModel::JinaEmbeddingsV2BaseCode,
+            ModelChoice::JinaEmbeddingsV2BaseEn => EmbeddingModel::JinaEmbeddingsV2BaseEN,
+            ModelChoice::EmbeddingGemma300M => EmbeddingModel::EmbeddingGemma300M,
+            ModelChoice::EmbeddingGemma300MQ4 => EmbeddingModel::EmbeddingGemma300MQ4,
+            ModelChoice::EmbeddingGemma300MQ => EmbeddingModel::EmbeddingGemma300MQ,
+            ModelChoice::SnowflakeArcticEmbedXs => EmbeddingModel::SnowflakeArcticEmbedXS,
+            ModelChoice::SnowflakeArcticEmbedXsQ => EmbeddingModel::SnowflakeArcticEmbedXSQ,
+            ModelChoice::SnowflakeArcticEmbedS => EmbeddingModel::SnowflakeArcticEmbedS,
+            ModelChoice::SnowflakeArcticEmbedSQ => EmbeddingModel::SnowflakeArcticEmbedSQ,
+            ModelChoice::SnowflakeArcticEmbedM => EmbeddingModel::SnowflakeArcticEmbedM,
+            ModelChoice::SnowflakeArcticEmbedMQ => EmbeddingModel::SnowflakeArcticEmbedMQ,
+            ModelChoice::SnowflakeArcticEmbedMLong => EmbeddingModel::SnowflakeArcticEmbedMLong,
+            ModelChoice::SnowflakeArcticEmbedMLongQ => EmbeddingModel::SnowflakeArcticEmbedMLongQ,
+            ModelChoice::SnowflakeArcticEmbedL => EmbeddingModel::SnowflakeArcticEmbedL,
+            ModelChoice::SnowflakeArcticEmbedLQ => EmbeddingModel::SnowflakeArcticEmbedLQ,
         }
     }
 }
