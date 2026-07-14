@@ -1,6 +1,7 @@
+use arboard::Clipboard;
 use clap::Parser;
 use color_eyre::eyre::Result;
-use std::io::{self, Read};
+use std::io::{self, IsTerminal, Read};
 use tracing::{info, Level};
 
 mod clustering;
@@ -44,14 +45,44 @@ fn init_tracing(level: Level) {
         .init();
 }
 
+/// Reads the current contents of the system clipboard as text.
+fn read_clipboard() -> Result<String> {
+    let mut clipboard = Clipboard::new()?;
+    let text = clipboard.get_text()?;
+    Ok(text)
+}
+
+/// Reads all of stdin to a string.
+fn read_stdin() -> Result<String> {
+    let mut raw_input = String::new();
+    io::stdin().read_to_string(&mut raw_input)?;
+    Ok(raw_input)
+}
+
+/// Reads input from stdin if it is piped and non-empty, otherwise falls
+/// back to the system clipboard.
+fn read_input() -> Result<String> {
+    if io::stdin().is_terminal() {
+        info!("stdin is a terminal, reading from clipboard instead");
+        return read_clipboard();
+    }
+
+    let raw_input = read_stdin()?;
+    if raw_input.trim().is_empty() {
+        info!("stdin was empty, falling back to clipboard");
+        read_clipboard()
+    } else {
+        Ok(raw_input)
+    }
+}
+
 fn main() -> Result<()> {
     color_eyre::install()?;
     let cli = Cli::parse();
     init_tracing(verbosity_level(cli.verbose));
 
-    let mut raw_input = String::new();
-    io::stdin().read_to_string(&mut raw_input)?;
-    info!(bytes = raw_input.len(), "read input from stdin");
+    let raw_input = read_input()?;
+    info!(bytes = raw_input.len(), "read input");
 
     let lines = input::read_non_blank_lines(&raw_input);
     let embeddings = embedding::embed_lines(&lines)?;
