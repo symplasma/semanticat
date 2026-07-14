@@ -71,6 +71,8 @@ orange
 - [ ] Clean or normalize text before generating embeddings
   - [x] Use only the title of markdown links
   - [ ] Add flag to disable markdown link handling
+  - [ ] Allow filename only embeddings for provided file paths via `--name-only` option
+  - [ ] Normalize `todo.txt` entries
   - [ ] Add other normalization options
   - [ ] Add user customizable normalization flags, probably based on regex
 - [x] Group text by semantic similarity
