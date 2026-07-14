@@ -14,7 +14,7 @@ pub struct Embedding(pub Vec<f32>);
 #[instrument(skip(lines))]
 pub fn embed_lines(lines: &[Line]) -> Result<Vec<Embedding>> {
     info!("loading fastembed model");
-    let mut model = TextEmbedding::try_new(InitOptions::new(EmbeddingModel::AllMiniLML6V2))
+    let mut model = TextEmbedding::try_new(InitOptions::new(EmbeddingModel::BGEBaseENV15))
         .map_err(|error| eyre!("failed to load fastembed model: {error}"))?;
 
     let texts: Vec<&str> = lines.iter().map(|line| line.text.as_str()).collect();
