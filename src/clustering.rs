@@ -44,6 +44,7 @@ pub fn cluster(
     let min_cluster_size = min_cluster_size.min(data.len()).max(1);
     let min_samples = min_samples.min(data.len()).max(1);
 
+    progress.set_message("Clustering...");
     info!(min_cluster_size, min_samples, "running HDBSCAN");
     let labels = run_hdbscan(&data, min_cluster_size, min_samples)?;
     progress.inc(embeddings.len() as u64);

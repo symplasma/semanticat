@@ -1,4 +1,5 @@
 use indicatif::{ProgressBar, ProgressStyle};
+use std::time::Duration;
 
 /// A progress bar that can be transparently disabled.
 ///
@@ -23,6 +24,7 @@ impl Progress {
             .expect("progress bar template is valid")
             .progress_chars("=>-"),
         );
+        bar.enable_steady_tick(Duration::from_millis(100));
         Self(Some(bar))
     }
 
