@@ -10,6 +10,7 @@ mod embedding;
 mod grouping;
 mod input;
 mod output;
+mod progress;
 
 /// Friendly names for the supported `fastembed` text embedding models.
 #[derive(Clone, Debug, clap::ValueEnum)]
@@ -184,6 +185,10 @@ struct Cli {
     /// List all available embedding models and exit.
     #[arg(long)]
     list_models: bool,
+
+    /// Disable the progress bar.
+    #[arg(long)]
+    no_progress: bool,
 }
 
 /// Maps a `-v` occurrence count to a tracing verbosity level.
@@ -265,8 +270,20 @@ fn main() -> Result<()> {
     info!(bytes = raw_input.len(), "read input");
 
     let lines = input::read_non_blank_lines(&raw_input);
-    let embeddings = embedding::embed_lines(&lines, cli.model.into())?;
-    let assignments = clustering::cluster(&embeddings, cli.min_cluster_size, cli.min_samples)?;
+
+    let progress_enabled = !cli.no_progress && cli.verbose == 0 && io::stderr().is_terminal();
+    let total_steps = (lines.len() as u64) * 2;
+    let progress = progress::Progress::new(total_steps, progress_enabled);
+
+    let embeddings = embedding::embed_lines(&lines, cli.model.into(), &progress)?;
+    let assignments = clustering::cluster(
+        &embeddings,
+        cli.min_cluster_size,
+        cli.min_samples,
+        &progress,
+    )?;
+    progress.finish_and_clear();
+
     let grouped = grouping::group(lines, assignments);
 
     let stdout = io::stdout();
