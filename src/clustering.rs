@@ -24,11 +24,22 @@ pub fn cluster(
     min_cluster_size: usize,
     min_samples: usize,
 ) -> Result<Vec<Assignment>> {
+    if embeddings.len() < 2 {
+        info!(
+            count = embeddings.len(),
+            "too few embeddings to cluster, treating all as noise"
+        );
+        return Ok(vec![Assignment::Noise; embeddings.len()]);
+    }
+
     let data: Vec<Vec<f64>> = embeddings
         .iter()
         .map(|embedding| embedding.0.iter().map(|&value| value as f64).collect())
         .collect();
     debug!(rows = data.len(), "built embedding matrix");
+
+    let min_cluster_size = min_cluster_size.min(data.len()).max(1);
+    let min_samples = min_samples.min(data.len()).max(1);
 
     let hyper_params = HdbscanHyperParams::builder()
         .min_cluster_size(min_cluster_size)
