@@ -83,7 +83,7 @@ fn print_available_models() {
             .expect("ModelChoice variants always have a possible value");
         let name = possible_value.get_name();
         let help = possible_value
-            .help()
+            .get_help()
             .map(|help| help.to_string())
             .unwrap_or_default();
         println!("{name} - {help}");
