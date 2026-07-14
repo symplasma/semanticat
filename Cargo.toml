@@ -2,6 +2,15 @@
 name = "semanticat"
 version = "0.1.0"
 edition = "2024"
+license = "BSD-3-Clause"                                                         # https://spdx.org/licenses/
+authors = ["Elio Grieco <grieco@egx.com>"]
+description = "An experimental utility to cluster/sort the lines of a file based on word embeddings."
+repository = "https://github.com/symplasma/semanticat"
+readme = "README.md"
+keywords = [ "semantic-search", "vector-search", "clustering", "text-embedding", "clipboard" ]  # free text
+categories = ["command-line-utilities"]                                          # https://crates.io/category_slugs
+exclude = [".vscode/*", ".gitignore", ".aider.*", ".rumdl_cache", ".envrc"]
+# https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
