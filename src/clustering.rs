@@ -1,5 +1,7 @@
 use crate::embedding::Embedding;
-use color_eyre::eyre::Result;
+use avx_clustering::HDBSCAN;
+use color_eyre::eyre::{eyre, Result};
+use ndarray::Array2;
 
 /// Identifies a cluster of semantically similar lines.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -17,23 +19,31 @@ pub enum Assignment {
 /// Runs HDBSCAN over `embeddings` and returns one [`Assignment`] per input
 /// embedding, in the same order.
 ///
-/// NOTE: `avx_clustering::HDBSCAN::new(min_cluster_size, min_samples)`
-/// constructs the clusterer; the `.fit(&data)` call below is a best-effort
-/// guess at the method used to actually run clustering and is pending
-/// verification against the real crate docs.
+/// NOTE: This assumes `HDBSCANResult` exposes a `labels: Vec<i32>` field
+/// (with negative values indicating noise), which is a best-effort guess
+/// pending verification against the real crate docs.
 pub fn cluster(
     embeddings: &[Embedding],
     min_cluster_size: usize,
     min_samples: usize,
 ) -> Result<Vec<Assignment>> {
-    let data: Vec<Vec<f32>> = embeddings
+    let rows = embeddings.len();
+    let cols = embeddings.first().map_or(0, |embedding| embedding.0.len());
+
+    let flat: Vec<f64> = embeddings
         .iter()
-        .map(|embedding| embedding.0.clone())
+        .flat_map(|embedding| embedding.0.iter().map(|&value| value as f64))
         .collect();
 
-    let labels = avx_clustering::HDBSCAN::new(min_cluster_size, min_samples).fit(&data);
+    let matrix = Array2::from_shape_vec((rows, cols), flat)
+        .map_err(|error| eyre!("failed to build embedding matrix: {error}"))?;
 
-    Ok(labels
+    let result = HDBSCAN::new(min_cluster_size, min_samples)
+        .fit(&matrix.view())
+        .map_err(|error| eyre!("HDBSCAN clustering failed: {error}"))?;
+
+    Ok(result
+        .labels
         .into_iter()
         .map(|label| {
             if label < 0 {

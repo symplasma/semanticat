@@ -17,7 +17,7 @@ pub fn embed_lines(lines: &[Line]) -> Result<Vec<Embedding>> {
     let model = StaticModel::from_pretrained("minishlab/potion-base-8M", None, None, None)
         .map_err(|error| eyre!("failed to load default model2vec model: {error}"))?;
 
-    let texts: Vec<&str> = lines.iter().map(|line| line.text.as_str()).collect();
+    let texts: Vec<String> = lines.iter().map(|line| line.text.clone()).collect();
     let vectors = model.encode(&texts);
 
     Ok(vectors.into_iter().map(Embedding).collect())
