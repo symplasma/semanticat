@@ -17,9 +17,10 @@ pub enum Assignment {
 /// Runs HDBSCAN over `embeddings` and returns one [`Assignment`] per input
 /// embedding, in the same order.
 ///
-/// NOTE: The exact `avx-clustering` API (module path, function name,
-/// argument order, negative-label-means-noise convention) is a placeholder
-/// pending verification against the real crate docs.
+/// NOTE: `avx_clustering::HDBSCAN::new(min_cluster_size, min_samples)`
+/// constructs the clusterer; the `.fit(&data)` call below is a best-effort
+/// guess at the method used to actually run clustering and is pending
+/// verification against the real crate docs.
 pub fn cluster(
     embeddings: &[Embedding],
     min_cluster_size: usize,
@@ -30,7 +31,7 @@ pub fn cluster(
         .map(|embedding| embedding.0.clone())
         .collect();
 
-    let labels = avx_clustering::HDBSCAN::hdbscan(&data, min_cluster_size, min_samples)?;
+    let labels = avx_clustering::HDBSCAN::new(min_cluster_size, min_samples).fit(&data);
 
     Ok(labels
         .into_iter()
