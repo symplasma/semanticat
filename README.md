@@ -5,3 +5,47 @@ An experiment to sort the lines of a file based on word embeddings.
 After some research, the technique needed to make this program work is **semantic clustering**, rather than the more common vector search. [CSEP (Cosine Similarity Embeddings Print)](https://lib.rs/crates/csep) already handles printing all lines similar to a specific query.
 
 Ideally we want to read in text from STDIN, segment it (probably just by line for now), compute the embeddings, run a clustering algorithm, and return the lines as clusters.
+
+## Usage
+
+Pipe text into `semanticat` and it groups similar lines together.
+
+Each non-blank line of input is treated as an item to be clustered:
+
+- Blank lines are ignored.
+- Lines belonging to the same cluster are printed together, separated by a
+  blank line from other clusters.
+- Lines that don't fit any cluster ("noise") are printed last.
+- If STDIN is a terminal (i.e. no input is piped in), `semanticat` reads
+  text from the system clipboard instead.
+
+```sh
+cat items.txt | semanticat
+```
+
+### Options
+
+- `--min-cluster-size <N>`: Minimum number of lines required to form a
+  cluster (default: `2`).
+- `--min-samples <N>`: Minimum number of samples in a neighborhood for
+  HDBSCAN core points (default: `2`).
+- `--model <MODEL>`: Embedding model to use for semantic similarity. Run
+  `semanticat --list-models` to see all available models.
+- `--list-models`: Print all available embedding models with descriptions
+  and exit.
+- `-v`, `-vv`, `-vvv`: Increase logging verbosity (info, debug, trace).
+  Logs are written to stderr, keeping stdout reserved for the actual
+  clustered output.
+
+### Example
+
+```sh
+$ printf 'apple\nbanana\n\norange\ncar\ntruck\n' | semanticat
+car
+truck
+
+apple
+banana
+
+orange
+```
