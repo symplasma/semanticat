@@ -42,6 +42,17 @@ impl Progress {
         }
     }
 
+    /// Temporarily hides the progress bar while `f` runs.
+    ///
+    /// Useful when another component (e.g. a model download) may print its
+    /// own output that would otherwise clash with our progress bar.
+    pub fn suspend<R>(&self, f: impl FnOnce() -> R) -> R {
+        match &self.0 {
+            Some(bar) => bar.suspend(f),
+            None => f(),
+        }
+    }
+
     /// Finishes and removes the progress bar, if it was shown.
     pub fn finish_and_clear(&self) {
         if let Some(bar) = &self.0 {

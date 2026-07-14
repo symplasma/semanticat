@@ -24,7 +24,8 @@ pub fn embed_lines(
 ) -> Result<Vec<Embedding>> {
     progress.set_message("Loading model...");
     info!(?model, "loading fastembed model");
-    let mut model = TextEmbedding::try_new(InitOptions::new(model))
+    let mut model = progress
+        .suspend(|| TextEmbedding::try_new(InitOptions::new(model)))
         .map_err(|error| eyre!("failed to load fastembed model: {error}"))?;
 
     progress.set_message("Embedding...");
