@@ -1,5 +1,5 @@
 use arboard::Clipboard;
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use color_eyre::eyre::Result;
 use fastembed::EmbeddingModel;
 use std::io::{self, IsTerminal, Read};
@@ -51,6 +51,10 @@ struct Cli {
     /// Increase logging verbosity (-v for debug, -vv for trace).
     #[arg(short, long, action = clap::ArgAction::Count)]
     verbose: u8,
+
+    /// List all available embedding models and exit.
+    #[arg(long)]
+    list_models: bool,
 }
 
 /// Maps a `-v` occurrence count to a tracing verbosity level.
@@ -69,6 +73,21 @@ fn init_tracing(level: Level) {
         .with_max_level(level)
         .with_writer(io::stderr)
         .init();
+}
+
+/// Prints all available embedding models with their descriptions.
+fn print_available_models() {
+    for choice in ModelChoice::value_variants() {
+        let possible_value = choice
+            .to_possible_value()
+            .expect("ModelChoice variants always have a possible value");
+        let name = possible_value.get_name();
+        let help = possible_value
+            .help()
+            .map(|help| help.to_string())
+            .unwrap_or_default();
+        println!("{name} - {help}");
+    }
 }
 
 /// Reads the current contents of the system clipboard as text.
@@ -106,6 +125,11 @@ fn main() -> Result<()> {
     color_eyre::install()?;
     let cli = Cli::parse();
     init_tracing(verbosity_level(cli.verbose));
+
+    if cli.list_models {
+        print_available_models();
+        return Ok(());
+    }
 
     let raw_input = read_input()?;
     info!(bytes = raw_input.len(), "read input");
