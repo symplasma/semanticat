@@ -62,6 +62,11 @@ orange
 - [x] Read from STDIN
 - [x] Read from clipboard if STDIN is a terminal (tty)
 - [ ] Read from files specified as arguments
+- [ ] Clean or normalize text before generating embeddings
+  - [x] Use only the title of markdown links
+  - [ ] Add flag to disable markdown link handling
+  - [ ] Add other normalization options
+  - [ ] Add user customizable normalization flags, probably based on regex
 - [x] Group text by semantic similarity
 - [ ] Allow user selectable clustering algorithms
 - [ ] Add meaningful headers between clusters (probably requires integration with an LLM)
