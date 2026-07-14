@@ -30,7 +30,7 @@ pub fn cluster(
         .map(|embedding| embedding.0.clone())
         .collect();
 
-    let labels = avx_clustering::hdbscan::hdbscan(&data, min_cluster_size, min_samples)?;
+    let labels = avx_clustering::HDBSCAN::hdbscan(&data, min_cluster_size, min_samples)?;
 
     Ok(labels
         .into_iter()
