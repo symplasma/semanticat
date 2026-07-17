@@ -81,11 +81,11 @@ fn cluster_prompt(lines: &[Line]) -> String {
 }
 
 /// Generates a single [`Heading`] for `lines` using `model`.
-async fn generate_heading(model: &mut Llama, lines: &[Line], max_words: usize) -> Result<Heading> {
-    let task = Task::builder(SYSTEM_PROMPT).build();
+async fn generate_heading(model: &Llama, lines: &[Line], max_words: usize) -> Result<Heading> {
+    let task = Task::new(model.clone(), SYSTEM_PROMPT);
     let prompt = cluster_prompt(lines);
 
-    let raw = task.run(prompt, model).all_text().await;
+    let raw = task.run(prompt).all_text().await;
     debug!(?raw, "generated raw heading text");
 
     Ok(Heading::new(&raw, max_words))
@@ -109,13 +109,13 @@ pub fn generate_headings(
 
     runtime.block_on(async {
         progress.set_message("Loading heading model...");
-        let mut model = load_model(&model_choice).await?;
+        let model = load_model(&model_choice).await?;
         info!(?model_choice, "loaded heading model");
 
         progress.set_message("Generating headings...");
         let mut headings = Vec::with_capacity(clusters.len());
         for cluster in clusters {
-            let heading = generate_heading(&mut model, cluster, max_words).await?;
+            let heading = generate_heading(&model, cluster, max_words).await?;
             progress.inc(1);
             headings.push(heading);
         }
