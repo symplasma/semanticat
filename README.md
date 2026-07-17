@@ -56,9 +56,21 @@ banana
 orange
 ```
 
+## Embedding Model Cache
+
+On first use of a given embedding model, `semanticat` downloads it and
+caches it locally to avoid re-downloading it on subsequent runs. Model
+files are stored under a platform-appropriate cache directory, respecting
+`$XDG_CACHE_HOME` on Linux, for example:
+
+- Linux: `~/.cache/semanticat/fastembed`
+- macOS: `~/Library/Caches/semanticat/fastembed`
+- Windows: `%LOCALAPPDATA%\semanticat\fastembed`
+
 ## Features
 
 - [x] Auto-download embedding models on first use
+- [x] Store downloaded models in an XDG-compliant cache directory
 - [x] Progress bar for:
   - [x] Downloading new models
   - [x] Loading models
