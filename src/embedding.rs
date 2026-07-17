@@ -1,13 +1,20 @@
 use crate::input::Line;
 use crate::progress::Progress;
 use color_eyre::eyre::{Result, eyre};
+use directories::ProjectDirs;
 use fastembed::{EmbeddingModel, InitOptions, TextEmbedding};
 use regex::Regex;
+use std::path::PathBuf;
 use std::sync::LazyLock;
 use tracing::{debug, info, instrument};
 
 /// Number of lines embedded per batch, used to report incremental progress.
 const BATCH_SIZE: usize = 32;
+
+/// Name of the cache subdirectory used to store downloaded `fastembed`
+/// model files, kept separate from any other cache files this program may
+/// store in the future.
+const FASTEMBED_CACHE_SUBDIR: &str = "fastembed";
 
 /// Matches an inline markdown link like `[title](url)`, capturing the link
 /// title in the first group so the URL can be discarded.
@@ -31,6 +38,19 @@ fn strip_markdown_link_urls(text: &str) -> String {
     MARKDOWN_LINK.replace_all(text, "$1").into_owned()
 }
 
+/// Computes the platform-appropriate cache directory in which downloaded
+/// `fastembed` model files should be stored.
+///
+/// This respects platform conventions (e.g. `$XDG_CACHE_HOME` on Linux,
+/// `~/Library/Caches` on macOS, `%LOCALAPPDATA%` on Windows), and stores
+/// files under a `fastembed` subdirectory of this program's cache dir to
+/// avoid conflicts with any other cache files.
+fn fastembed_cache_dir() -> Result<PathBuf> {
+    let project_dirs = ProjectDirs::from("", "", "semanticat")
+        .ok_or_else(|| eyre!("could not determine a cache directory for this platform"))?;
+    Ok(project_dirs.cache_dir().join(FASTEMBED_CACHE_SUBDIR))
+}
+
 /// A dense vector representation of a single line of text.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Embedding(pub Vec<f32>);
@@ -47,9 +67,12 @@ pub fn embed_lines(
     progress: &Progress,
 ) -> Result<Vec<Embedding>> {
     progress.set_message("Loading model...");
-    info!(?model, "loading fastembed model");
+    let cache_dir = fastembed_cache_dir()?;
+    info!(?model, ?cache_dir, "loading fastembed model");
     let mut model = progress
-        .suspend(|| TextEmbedding::try_new(InitOptions::new(model)))
+        .suspend(|| {
+            TextEmbedding::try_new(InitOptions::new(model).with_cache_dir(cache_dir))
+        })
         .map_err(|error| eyre!("failed to load fastembed model: {error}"))?;
 
     progress.set_message("Embedding...");
@@ -107,5 +130,14 @@ mod tests {
     fn detects_markdown_links() {
         assert!(contains_markdown_link("[title](url)"));
         assert!(!contains_markdown_link("no links here"));
+    }
+
+    #[test]
+    fn fastembed_cache_dir_ends_with_fastembed_subdir() {
+        let cache_dir = fastembed_cache_dir().expect("cache dir should be determinable");
+        assert_eq!(
+            cache_dir.file_name().and_then(|name| name.to_str()),
+            Some(FASTEMBED_CACHE_SUBDIR)
+        );
     }
 }
