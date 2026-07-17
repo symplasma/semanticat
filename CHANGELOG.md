@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.3.0 (2026-07-17)
+
+### Documentation
+
+ - <csr-id-d16976a1263810534a0fd595f2d6e4af5d426542/> document XDG-compliant embedding model cache directory
+
+### New Features
+
+ - <csr-id-03c57140ebb29dfe66c1dcf208ae345be1e0415e/> add XDG cache directory support for fastembed models
+ - <csr-id-53320d6f541eaafeb5f8b6ae58f1e13d8f210861/> add support for reading input from file path arguments
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 5 commits contributed to the release over the course of 3 calendar days.
+ - 3 days passed between releases.
+ - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Bump version ([`414575d`](https://github.com/symplasma/semanticat/commit/414575d5e4d8f1b3145095e68ff166d4c402f488))
+    - Add XDG cache directory support for fastembed models ([`03c5714`](https://github.com/symplasma/semanticat/commit/03c57140ebb29dfe66c1dcf208ae345be1e0415e))
+    - Document XDG-compliant embedding model cache directory ([`d16976a`](https://github.com/symplasma/semanticat/commit/d16976a1263810534a0fd595f2d6e4af5d426542))
+    - Add support for reading input from file path arguments ([`53320d6`](https://github.com/symplasma/semanticat/commit/53320d6f541eaafeb5f8b6ae58f1e13d8f210861))
+    - Add features ([`245e015`](https://github.com/symplasma/semanticat/commit/245e015e4bb6d610956ee34a90977b9cc205b9a1))
+</details>
+
 ## v0.2.0 (2026-07-14)
 
 ### New Features
@@ -15,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 8 commits contributed to the release.
+ - 9 commits contributed to the release.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -26,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release semanticat v0.2.0 ([`ab4c356`](https://github.com/symplasma/semanticat/commit/ab4c356862c79525167873a7368ee755e5c78962))
     - Release semanticat v0.1.0 ([`52faa73`](https://github.com/symplasma/semanticat/commit/52faa731e131995e9fd83f4aa9dc77f38c05e3c0))
     - Add status section and LICENSE file ([`1158536`](https://github.com/symplasma/semanticat/commit/115853636e956f5404a785f777e828f00da74bc0))
     - Add more features ([`3c4b5dc`](https://github.com/symplasma/semanticat/commit/3c4b5dc9b581e72e25aaee05303048d7090b86cd))
