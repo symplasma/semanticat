@@ -10,6 +10,7 @@ use tracing::{Level, info};
 mod clustering;
 mod embedding;
 mod grouping;
+mod heading;
 mod input;
 mod output;
 mod progress;
@@ -180,6 +181,20 @@ struct Cli {
     #[arg(long, value_enum, default_value = "bge-base")]
     model: ModelChoice,
 
+    /// Generate a short heading for each cluster using a local LLM.
+    #[arg(long)]
+    add_headings: bool,
+
+    /// Model to use for generating cluster headings (only used with
+    /// --add-headings).
+    #[arg(long, value_enum, default_value = "summarizer")]
+    heading_model: heading::HeadingModelChoice,
+
+    /// Maximum number of words allowed in a generated cluster heading (only
+    /// used with --add-headings).
+    #[arg(long, default_value_t = 10)]
+    max_header_length: usize,
+
     /// Increase logging verbosity (-v for debug, -vv for trace).
     #[arg(short, long, action = clap::ArgAction::Count)]
     verbose: u8,
@@ -305,13 +320,26 @@ fn main() -> Result<()> {
         cli.min_samples,
         &progress,
     )?;
-    progress.finish_and_clear();
 
     let grouped = grouping::group(lines, assignments);
 
+    let headings = if cli.add_headings {
+        progress.inc_length(grouped.clusters.len() as u64);
+        Some(heading::generate_headings(
+            &grouped.clusters,
+            cli.heading_model,
+            cli.max_header_length,
+            &progress,
+        )?)
+    } else {
+        None
+    };
+
+    progress.finish_and_clear();
+
     let stdout = io::stdout();
     let mut handle = stdout.lock();
-    output::print(&grouped, &mut handle)?;
+    output::print(&grouped, headings.as_deref(), &mut handle)?;
 
     Ok(())
 }

@@ -42,6 +42,16 @@ impl Progress {
         }
     }
 
+    /// Increases the progress bar's total length by `delta` units.
+    ///
+    /// Useful when additional work (e.g. heading generation) is only known
+    /// about after the bar was created.
+    pub fn inc_length(&self, delta: u64) {
+        if let Some(bar) = &self.0 {
+            bar.inc_length(delta);
+        }
+    }
+
     /// Temporarily hides the progress bar while `f` runs.
     ///
     /// Useful when another component (e.g. a model download) may print its
