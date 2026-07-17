@@ -6,6 +6,14 @@ After some research, the technique needed to make this program work is **semanti
 
 Ideally we want to read in text from STDIN, segment it (probably just by line for now), compute the embeddings, run a clustering algorithm, and return the lines as clusters.
 
+## Motivation
+
+Why would I want something like `semanticat`?
+
+Say you have started collecting links into a collection of Markdown files since the bookmarking facility in browsers is too brittle and unreliable. If you've collected hundreds or thousands of links into a single file, even going thourgh and categorizing them manually can take a very long time.
+
+If we had a tool that could automatically group this torrent of links into manageable chunks, it would make the task a lot more manageable. It doesn't replace human curation, it just acts as an automated first-pass to reduce the effort that the humans must expend to curate the data.
+
 ## Status
 
 This is currently **Alpha** software. It may work for you but, it does not yet have a rigorous test suite, nor has it been rigorously tested.
