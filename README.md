@@ -88,5 +88,7 @@ files are stored under a platform-appropriate cache directory, respecting
   - [ ] Add other normalization options
   - [ ] Add user customizable normalization flags, probably based on regex
 - [x] Group text by semantic similarity
+- [ ] Auto-generate cluster headers, maybe via [Kalosm](https://floneum.com/kalosm/docs/reference/llms/structured_generation/)
+- [ ] Auto-route new input to fit under existing headers
 - [ ] Allow user selectable clustering algorithms
 - [ ] Add meaningful headers between clusters (probably requires integration with an LLM)
