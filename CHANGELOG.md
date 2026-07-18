@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.4.0 (2026-07-17)
+
+### New Features
+
+ - <csr-id-227828f17d9e1cacecc59aed035122195e9222a5/> add auto-generated cluster headings with kalosm integration
+
+### Bug Fixes
+
+ - <csr-id-44dda3979f270d43a72b70d254a92cdc28f719bd/> add space after header
+ - <csr-id-22358c52c76f911dd4deabe4e189d929d0f471e0/> account for clustering phase in progress bar total steps
+ - <csr-id-2ae6cc623dcd21f94da5133ff79b8ba7ea953094/> suspend progress bar during kalosm model download and configure cache dir
+ - <csr-id-7511abbb8550c261505f0595c9ee51639a21ab33/> update Task API usage and remove unnecessary mutability
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 9 commits contributed to the release.
+ - 5 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Bump version number ([`6ad5799`](https://github.com/symplasma/semanticat/commit/6ad5799058b82b8321de20f2b59c36f68af7d3b6))
+    - Add space after header ([`44dda39`](https://github.com/symplasma/semanticat/commit/44dda3979f270d43a72b70d254a92cdc28f719bd))
+    - Account for clustering phase in progress bar total steps ([`22358c5`](https://github.com/symplasma/semanticat/commit/22358c52c76f911dd4deabe4e189d929d0f471e0))
+    - Suspend progress bar during kalosm model download and configure cache dir ([`2ae6cc6`](https://github.com/symplasma/semanticat/commit/2ae6cc623dcd21f94da5133ff79b8ba7ea953094))
+    - Update Task API usage and remove unnecessary mutability ([`7511abb`](https://github.com/symplasma/semanticat/commit/7511abbb8550c261505f0595c9ee51639a21ab33))
+    - Add auto-generated cluster headings with kalosm integration ([`227828f`](https://github.com/symplasma/semanticat/commit/227828f17d9e1cacecc59aed035122195e9222a5))
+    - Add kalosm crate for summarization ([`505bb1e`](https://github.com/symplasma/semanticat/commit/505bb1efbb340b6e73c14f6f0c33db9b51b09ce8))
+    - Add motivation section ([`9b1ce1a`](https://github.com/symplasma/semanticat/commit/9b1ce1a8b56eb812b1f2b8ef7fa4069c6f159137))
+    - Update readme ([`5955d48`](https://github.com/symplasma/semanticat/commit/5955d485e191e3c64860487d7a3febdcf8d17e51))
+</details>
+
 ## v0.3.0 (2026-07-17)
 
 ### Documentation
@@ -20,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 5 commits contributed to the release over the course of 3 calendar days.
+ - 6 commits contributed to the release over the course of 3 calendar days.
  - 3 days passed between releases.
  - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -32,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release semanticat v0.3.0 ([`f04d92b`](https://github.com/symplasma/semanticat/commit/f04d92bbd606e9e49b5e9cf5efecab8a55ef468a))
     - Bump version ([`414575d`](https://github.com/symplasma/semanticat/commit/414575d5e4d8f1b3145095e68ff166d4c402f488))
     - Add XDG cache directory support for fastembed models ([`03c5714`](https://github.com/symplasma/semanticat/commit/03c57140ebb29dfe66c1dcf208ae345be1e0415e))
     - Document XDG-compliant embedding model cache directory ([`d16976a`](https://github.com/symplasma/semanticat/commit/d16976a1263810534a0fd595f2d6e4af5d426542))
