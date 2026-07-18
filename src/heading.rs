@@ -102,23 +102,30 @@ impl fmt::Display for Heading {
 
 /// Loads the `kalosm` model corresponding to `choice`.
 ///
-/// `kalosm`'s underlying `candle` backend prints a hard-coded message
-/// directly to stderr via `eprintln!` when it detects there is no GPU
-/// acceleration available (e.g. "Running on CPU, to run on GPU, build
-/// with the cuda feature enabled..."). This bypasses the `tracing`
-/// framework entirely, so it can't be filtered via an `EnvFilter` (see
+/// `kalosm`'s underlying `candle`/`kalosm-common` device-selection code
+/// prints a hard-coded message directly to **stdout** via `println!` when
+/// it detects there is no GPU acceleration available (e.g. "Running on
+/// CPU, to run on GPU, build with the cuda feature enabled..."). This was
+/// confirmed empirically: the message persists under `2>/dev/null` but
+/// disappears under `1>/dev/null`. Because it bypasses the `tracing`
+/// framework entirely, it can't be filtered via an `EnvFilter` (see
 /// `design/crate_docs/kalosm-unwanted-message.mb`, section 4, "Hard
 /// Suppression"). We use the `gag` crate to temporarily redirect the
-/// process's stderr to `/dev/null` for the duration of model loading
-/// (when this message is printed), restoring it automatically once
-/// `_stderr_gag` is dropped at the end of this function.
+/// process's stdout (and, defensively, stderr, in case a future `kalosm`
+/// version moves this message there, or other stderr diagnostics appear
+/// during loading) to `/dev/null` for the duration of model loading,
+/// restoring both automatically once the guards are dropped at the end of
+/// this function.
 ///
-/// Note this suppresses *all* stderr output while the guard is held, not
-/// just the unwanted message, so any other legitimate warnings emitted by
-/// `kalosm`/`hf-hub` during loading (e.g. download progress) will also be
-/// silenced.
+/// Note this suppresses *all* stdout/stderr output while the guards are
+/// held, not just the unwanted message. Since our own program never
+/// writes its actual results to stdout until after headings are fully
+/// generated (see `main`), suppressing stdout during model loading is
+/// safe and won't hide any of our own output.
 #[instrument]
 async fn load_model(choice: &HeadingModelChoice) -> Result<Llama> {
+    let _stdout_gag =
+        Gag::stdout().map_err(|error| eyre!("failed to suppress model-loading stdout: {error}"))?;
     let _stderr_gag =
         Gag::stderr().map_err(|error| eyre!("failed to suppress model-loading stderr: {error}"))?;
 
