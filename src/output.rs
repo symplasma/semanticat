@@ -26,7 +26,7 @@ pub fn print(
 
     for (index, cluster) in grouped.clusters.iter().enumerate() {
         if let Some(heading) = headings.and_then(|headings| headings.get(index)) {
-            writeln!(writer, "## {heading}")?;
+            writeln!(writer, "## {heading}\n")?;
         }
 
         for line in cluster {
