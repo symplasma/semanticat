@@ -93,10 +93,14 @@ files are stored under a platform-appropriate cache directory, respecting
   - [ ] Add flag to disable markdown link handling
   - [ ] Allow filename only embeddings for provided file paths via `--name-only` option
   - [ ] Normalize `todo.txt` entries
+  - [ ] Use the [Webpage](https://lib.rs/crates/webpage) crate to pull title, description, and possibly other metadata from provided links that can aid in creating embeddings and headers
   - [ ] Add other normalization options
   - [ ] Add user customizable normalization flags, probably based on regex
 - [x] Group text by semantic similarity
-- [ ] Auto-generate cluster headers, maybe via [Kalosm](https://floneum.com/kalosm/docs/reference/llms/structured_generation/)
+- [x] Auto-generate cluster headers via [Kalosm](https://floneum.com/kalosm/docs/reference/llms/structured_generation/)
 - [ ] Auto-route new input to fit under existing headers
 - [ ] Allow user selectable clustering algorithms
-- [ ] Add meaningful headers between clusters (probably requires integration with an LLM)
+- [ ] Interactive mode (TUI and/or GUI) to manually adjust clusters and sort ungrouped items into appropriate clusters
+- [ ] Auto-suggest a few potential clusters based on closest matching embeddings
+- [ ] Reranking or conducting a second pass to try and reduce number of ungrouped items
+- [ ] Add integration with notification frameworks to post a notification to the user that the job has completed
