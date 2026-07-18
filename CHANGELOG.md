@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.5.0 (2026-07-17)
+
+### New Features
+
+ - <csr-id-707e47ac2c5284f3a2815297baea5b9b375551d0/> suppress unwanted stderr output from kalosm using gag crate
+
+### Bug Fixes
+
+ - <csr-id-510794e6e541de4dd6c8e09befb6e824dddf89f9/> suppress stdout during model loading to hide kalosm device message
+ - <csr-id-bd1e46dfbe185ca7a98f65845036240bd3425ee9/> Add new line on ungrouped header
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 5 commits contributed to the release.
+ - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Suppress stdout during model loading to hide kalosm device message ([`510794e`](https://github.com/symplasma/semanticat/commit/510794e6e541de4dd6c8e09befb6e824dddf89f9))
+    - Suppress unwanted stderr output from kalosm using gag crate ([`707e47a`](https://github.com/symplasma/semanticat/commit/707e47ac2c5284f3a2815297baea5b9b375551d0))
+    - Add gag crate ([`a6af25c`](https://github.com/symplasma/semanticat/commit/a6af25c2576b7f5d24d7c912dd06385f53ef643c))
+    - Add new line on ungrouped header ([`bd1e46d`](https://github.com/symplasma/semanticat/commit/bd1e46dfbe185ca7a98f65845036240bd3425ee9))
+    - Update features ([`9d6f156`](https://github.com/symplasma/semanticat/commit/9d6f1562a33ce9fed61bed0156c16cda4c180434))
+</details>
+
 ## v0.4.0 (2026-07-17)
 
 ### New Features
@@ -22,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 9 commits contributed to the release.
+ - 10 commits contributed to the release.
  - 5 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -33,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release semanticat v0.4.0 ([`fbb5857`](https://github.com/symplasma/semanticat/commit/fbb58576820500374ce80f73d3421b714dcdac24))
     - Bump version number ([`6ad5799`](https://github.com/symplasma/semanticat/commit/6ad5799058b82b8321de20f2b59c36f68af7d3b6))
     - Add space after header ([`44dda39`](https://github.com/symplasma/semanticat/commit/44dda3979f270d43a72b70d254a92cdc28f719bd))
     - Account for clustering phase in progress bar total steps ([`22358c5`](https://github.com/symplasma/semanticat/commit/22358c52c76f911dd4deabe4e189d929d0f471e0))
