@@ -2,6 +2,7 @@ use crate::input::Line;
 use crate::progress::Progress;
 use color_eyre::eyre::{Result, eyre};
 use directories::ProjectDirs;
+use gag::Gag;
 use kalosm::language::{Llama, LlamaSource, Task, TextStream};
 use std::fmt;
 use std::path::PathBuf;
@@ -100,8 +101,27 @@ impl fmt::Display for Heading {
 }
 
 /// Loads the `kalosm` model corresponding to `choice`.
+///
+/// `kalosm`'s underlying `candle` backend prints a hard-coded message
+/// directly to stderr via `eprintln!` when it detects there is no GPU
+/// acceleration available (e.g. "Running on CPU, to run on GPU, build
+/// with the cuda feature enabled..."). This bypasses the `tracing`
+/// framework entirely, so it can't be filtered via an `EnvFilter` (see
+/// `design/crate_docs/kalosm-unwanted-message.mb`, section 4, "Hard
+/// Suppression"). We use the `gag` crate to temporarily redirect the
+/// process's stderr to `/dev/null` for the duration of model loading
+/// (when this message is printed), restoring it automatically once
+/// `_stderr_gag` is dropped at the end of this function.
+///
+/// Note this suppresses *all* stderr output while the guard is held, not
+/// just the unwanted message, so any other legitimate warnings emitted by
+/// `kalosm`/`hf-hub` during loading (e.g. download progress) will also be
+/// silenced.
 #[instrument]
 async fn load_model(choice: &HeadingModelChoice) -> Result<Llama> {
+    let _stderr_gag =
+        Gag::stderr().map_err(|error| eyre!("failed to suppress model-loading stderr: {error}"))?;
+
     let model = match choice {
         HeadingModelChoice::Summarizer => Llama::new_chat().await,
         HeadingModelChoice::Llama => {
