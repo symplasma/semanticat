@@ -36,7 +36,7 @@ pub fn print(
     }
 
     if headings.is_some() && !grouped.noise.is_empty() {
-        writeln!(writer, "## Ungrouped")?;
+        writeln!(writer, "## Ungrouped\n")?;
     }
 
     for line in &grouped.noise {
