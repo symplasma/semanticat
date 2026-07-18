@@ -310,7 +310,10 @@ fn main() -> Result<()> {
     let lines = input::read_non_blank_lines(&raw_input);
 
     let progress_enabled = !cli.no_progress && cli.verbose == 0 && io::stderr().is_terminal();
-    let total_steps = lines.len() as u64;
+    // Both the embedding phase and the clustering phase advance the shared
+    // progress bar by one tick per line, so the initial total must reserve
+    // steps for both up front (headings, if enabled, extend it further).
+    let total_steps = lines.len() as u64 * 2;
     let progress = progress::Progress::new(total_steps, progress_enabled);
 
     let embeddings = embedding::embed_lines(&lines, cli.model.into(), &progress)?;
